@@ -69,6 +69,9 @@ class FrameMain(wx.Frame):
         self.m_header_ctrl.SetBorders(0)
         self.m_header_ctrl.LoadFile(template_header)
 
+        self.m_result_ctrl.SetBorders(0)
+        self.m_result_ctrl.LoadFile(template_list)
+
     def __del__(self):
         pass
 
