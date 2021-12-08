@@ -50,22 +50,6 @@ class FrameMain(wx.Frame):
         template_header = os.path.join(html_path, "header.html")
         template_list = os.path.join(html_path, "list.html")
 
-        my_html = """
-<html>
-<body BGCOLOR=#000000 TEXT=#FFFFFF>
-<table width="100%"  valign="center"  border="1" cellspacing="0" cellpadding="0">
-<tbody>
-<tr HEIGHT=>
-<td style="width: 25%;" ALIGN=center><H1>CCO</H1> accuracy 13.5%</td>
-<td style="width: 25%;" ALIGN=center><H1>LSI</H1></td>
-<td style="width: 25%;" ALIGN=center><H1>LSC</H1></td>
-<td style="width: 25%;" ALIGN=center><H1>CCA</H1></td>
-</tr>
-</tbody>
-</table>
-</body>
-</html>
-        """
         self.m_header_ctrl.SetBorders(0)
         self.m_header_ctrl.LoadFile(template_header)
 
@@ -76,7 +60,38 @@ class FrameMain(wx.Frame):
         pass
 
     def _create_menu_bar(self):
-        pass
+        self.m_menu = wx.MenuBar(0)
+
+        # GAME
+        self.m_menu_game = wx.Menu()
+        self.m_menui_game_new = self.m_menu_game.Append(wx.ID_ANY, "New game..." + "\t" + "Ctrl+N")
+        self.m_menui_game_reset = self.m_menu_game.Append(wx.ID_ANY, "Reset")
+        self.m_menu.Append(self.m_menu_game, "Game")
+
+        # ROUND
+        self.m_menu_round = wx.Menu()
+        self.m_menui_round_set_score = self.m_menu_round.Append(wx.ID_ANY, "Set Score..." + "\t" + "Ctrl+S")
+        self.m_menu.Append(self.m_menu_round, "Round")
+
+        # PLAYER
+        self.m_menu_player = wx.Menu()
+        self.m_menui_player_add = self.m_menu_player.Append(wx.ID_ANY, "Add...")
+        self.m_menui_player_del = self.m_menu_player.Append(wx.ID_ANY, "Remove...")
+        self.m_menu.Append(self.m_menu_player, "Player")
+
+        # STATISTICS
+        self.m_menu_stat = wx.Menu()
+        self.m_menui_stat_leaderboard = self.m_menu_stat.Append(wx.ID_ANY, "Leaderborad")
+        self.m_menui_stat_by_player = self.m_menu_stat.Append(wx.ID_ANY, "By players")
+        self.m_menu.Append(self.m_menu_stat, "Statistics")
+
+        # HELP
+        self.m_menu_help = wx.Menu()
+        self.m_menu_help.Append(wx.ID_ABOUT, "About...")
+
+        self.m_menu.Append(self.m_menu_help, "Help")
+        self.SetMenuBar(self.m_menu)
+
 
     def _create_controls(self):
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
