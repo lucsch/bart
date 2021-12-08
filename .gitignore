@@ -118,3 +118,5 @@ dmypy.json
 
 # ignore version.py
 /bart/version.py
+.idea
+_screnshots*
