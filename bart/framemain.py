@@ -9,6 +9,7 @@ from bart.version import COMMIT_ID
 from bart.version import COMMIT_NUMBER
 from bart.version import VERSION_MAJOR_MINOR
 from bart.frameabout import FrameAbout
+from bart.framescore import FrameScore
 
 
 ###########################################################################
@@ -62,9 +63,14 @@ class FrameMain(wx.Frame):
 
     def _connect_events(self):
         self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
+        self.Bind(wx.EVT_MENU, self.on_score, id=self.m_menui_round_set_score.GetId())
 
     def on_about(self, event):
         my_dlg = FrameAbout(self)
+        my_dlg.ShowModal()
+
+    def on_score(self, event):
+        my_dlg = FrameScore(self)
         my_dlg.ShowModal()
 
     def __del__(self):
