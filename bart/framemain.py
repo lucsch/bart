@@ -69,6 +69,7 @@ class FrameMain(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
         self.Bind(wx.EVT_MENU, self.on_score, id=self.m_menui_round_set_score.GetId())
         self.Bind(wx.EVT_MENU, self.on_admin_new_database, id=self.m_menui_adm_new_db.GetId())
+        self.Bind(wx.EVT_MENU, self.on_admin_open_database, id=self.m_menui_adm_open_db.GetId())
 
     def on_about(self, event):
         my_dlg = FrameAbout(self)
@@ -95,8 +96,13 @@ class FrameMain(wx.Frame):
         self.open_database(my_dlg.GetPath())
 
     def open_database(self, database_path):
+        my_split_path = os.path.split(database_path)
+        if self.m_db.open_database(name=my_split_path[1], path_name=my_split_path[0]) is False:
+            wx.LogError("Opening: '{}' Failed!".format(database_path))
+            return False
 
-        pass
+        self.SetTitle(self.m_title + " - " + database_path)
+        return True
 
     def __del__(self):
         pass
