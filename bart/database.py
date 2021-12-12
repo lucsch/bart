@@ -12,6 +12,8 @@ class Database:
         self.m_name = ""
         self.m_path = ""
         self.m_connection = None
+        self.m_game_id = wx.NOT_FOUND
+        self.m_game_name = ""
 
     def create_new_database(self, name, path_name):
         if os.path.exists(path_name) is False:
@@ -52,6 +54,8 @@ class Database:
         'score3' INTEGER DEFAULT NULL,
         'score_total' INTEGER DEFAULT NULL
         );
+        
+        insert into game (name) values ('first_game');
         """
         if self.m_connection is not None:
             self._close_database()
@@ -71,7 +75,7 @@ class Database:
         self.m_connection = sqlite3.Connection(database_path_name)
         self.m_name = name
         self.m_path = path_name
-        return True
+        return self._get_last_game()
 
     def get_filename_full(self):
         return os.path.join(self.m_path, self.m_name)
@@ -96,4 +100,25 @@ class Database:
         cur = self.m_connection.cursor()
         cur.execute("insert into players (name) VALUES (:user_name)", {"user_name": user_name})
         self.m_connection.commit()
+        return True
+
+    def create_new_game(self, game_name):
+        if self.is_open() is False:
+            return False
+
+        cur = self.m_connection.cursor()
+        cur.execute("insert into game (name) values (:game_name)", {"game_name": game_name})
+        self.m_connection.commit()
+        return self._get_last_game()
+
+    def _get_last_game(self):
+        # get the last game ID
+        cur = self.m_connection.execute("select id, name from game order by id DESC limit 1")
+        my_last_game = cur.fetchone()
+        if my_last_game is None:
+            wx.LogError("No game in the database!")
+            return False
+
+        self.m_game_id = int(my_last_game[0])
+        self.m_game_name = my_last_game[1]
         return True

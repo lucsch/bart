@@ -71,6 +71,7 @@ class FrameMain(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_admin_new_database, id=self.m_menui_adm_new_db.GetId())
         self.Bind(wx.EVT_MENU, self.on_admin_open_database, id=self.m_menui_adm_open_db.GetId())
         self.Bind(wx.EVT_MENU, self.on_admin_new_user, id=self.m_menui_adm_user_add.GetId())
+        self.Bind(wx.EVT_MENU, self.on_new_game, id=self.m_menui_game_new.GetId())
 
 
     def on_about(self, event):
@@ -80,6 +81,15 @@ class FrameMain(wx.Frame):
     def on_score(self, event):
         my_dlg = FrameScore(self)
         my_dlg.ShowModal()
+
+    def on_new_game(self, event):
+        my_dlg = wx.TextEntryDialog(self, "Game name", "New game")
+        if my_dlg.ShowModal() != wx.ID_OK:
+            return
+        if self.m_db.create_new_game(my_dlg.GetValue()) is False:
+            wx.LogError("Unable to create game! open a database first!")
+            return
+        self.SetStatusText("Game: '{}'".format(my_dlg.GetValue()))
 
     def on_admin_new_database(self, event):
         my_dlg = wx.FileDialog(self, "New database name", wildcard="Database files (*.db)|*.db", style=wx.FD_SAVE)
@@ -104,6 +114,7 @@ class FrameMain(wx.Frame):
             return False
 
         self.SetTitle(self.m_title + " - " + database_path)
+        self.SetStatusText("Game: '{}'".format(self.m_db.m_game_name))
         return True
 
     def on_admin_new_user(self, event):
