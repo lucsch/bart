@@ -10,6 +10,7 @@ class Database:
 
     def __init__(self):
         self.m_name = ""
+        self.m_path = ""
         self.m_connection = None
 
     def create_new_database(self, name, path_name):
@@ -59,6 +60,21 @@ class Database:
         self.m_connection.executescript(my_sql_txt)
         self.m_connection.commit()
         return True
+
+    def open_database(self, name, path_name):
+        database_path_name = os.path.join(path_name, name)
+        if os.path.exists(database_path_name) is False:
+            wx.LogError("'{}' didn't exists!".format(database_path_name))
+            return False
+
+        self._close_database()
+        self.m_connection = sqlite3.Connection(database_path_name)
+        self.m_name = name
+        self.m_path = path_name
+        return True
+
+    def get_filename_full(self):
+        return os.path.join(self.m_path, self.m_name)
 
     def _close_database(self):
         if self.m_connection is None:

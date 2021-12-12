@@ -10,6 +10,7 @@ from bart.version import COMMIT_NUMBER
 from bart.version import VERSION_MAJOR_MINOR
 from bart.frameabout import FrameAbout
 from bart.framescore import FrameScore
+from bart.database import Database
 
 
 ###########################################################################
@@ -17,6 +18,7 @@ from bart.framescore import FrameScore
 ###########################################################################
 
 class FrameMain(wx.Frame):
+    m_db: Database
 
     def __init__(self):
         wx.Frame.__init__(self, None, id=wx.ID_ANY, title=wx.EmptyString, pos=wx.DefaultPosition,
@@ -43,6 +45,8 @@ class FrameMain(wx.Frame):
         icon.CopyFromBitmap(bart_icon.GetBitmap())
         self.SetIcon(icon)
 
+        self.m_db = Database()
+
         # events
         self._connect_events()
 
@@ -64,6 +68,7 @@ class FrameMain(wx.Frame):
     def _connect_events(self):
         self.Bind(wx.EVT_MENU, self.on_about, id=wx.ID_ABOUT)
         self.Bind(wx.EVT_MENU, self.on_score, id=self.m_menui_round_set_score.GetId())
+        self.Bind(wx.EVT_MENU, self.on_admin_new_database, id=self.m_menui_adm_new_db.GetId())
 
     def on_about(self, event):
         my_dlg = FrameAbout(self)
@@ -72,6 +77,26 @@ class FrameMain(wx.Frame):
     def on_score(self, event):
         my_dlg = FrameScore(self)
         my_dlg.ShowModal()
+
+    def on_admin_new_database(self, event):
+        my_dlg = wx.FileDialog(self, "New database name", wildcard="Database files (*.db)|*.db", style=wx.FD_SAVE)
+        if my_dlg.ShowModal() != wx.ID_OK:
+            return
+        my_new_file = os.path.split(my_dlg.GetPath())
+        if self.m_db.create_new_database(name=my_new_file[1], path_name=my_new_file[0]) is False:
+            wx.LogError("Creating '{}' Failed!".format(my_dlg.GetPath()))
+
+        # TODO: Open database here
+
+    def on_admin_open_database(self, event):
+        my_dlg = wx.FileDialog(self, "Open database", wildcard="Database files (*.db)|*.db", style=wx.FD_OPEN)
+        if my_dlg.ShowModal() != wx.ID_OK:
+            return
+        self.open_database(my_dlg.GetPath())
+
+    def open_database(self, database_path):
+
+        pass
 
     def __del__(self):
         pass
@@ -101,6 +126,14 @@ class FrameMain(wx.Frame):
         self.m_menui_stat_leaderboard = self.m_menu_stat.Append(wx.ID_ANY, "Leaderborad")
         self.m_menui_stat_by_player = self.m_menu_stat.Append(wx.ID_ANY, "By players")
         self.m_menu.Append(self.m_menu_stat, "Statistics")
+
+        # ADMIN
+        self.m_menu_admin = wx.Menu()
+        self.m_menui_adm_new_db = self.m_menu_admin.Append(wx.ID_ANY, "New database...")
+        self.m_menui_adm_open_db = self.m_menu_admin.Append(wx.ID_ANY, "Open database...")
+        self.m_menu_admin.AppendSeparator()
+        self.m_menui_adm_user_add = self.m_menu_admin.Append(wx.ID_ANY, "New user...")
+        self.m_menu.Append(self.m_menu_admin, "Admin")
 
         # HELP
         self.m_menu_help = wx.Menu()
