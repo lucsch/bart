@@ -1,6 +1,6 @@
 CREATE TABLE 'game' (
 'id' INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT,
-'date' DATETIME DEFAULT '(datetime('now','localtime'))',
+'date' DATETIME DEFAULT (datetime('now','localtime')),
 'name' VARCHAR DEFAULT NULL
 );
 
