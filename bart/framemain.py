@@ -70,6 +70,8 @@ class FrameMain(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_score, id=self.m_menui_round_set_score.GetId())
         self.Bind(wx.EVT_MENU, self.on_admin_new_database, id=self.m_menui_adm_new_db.GetId())
         self.Bind(wx.EVT_MENU, self.on_admin_open_database, id=self.m_menui_adm_open_db.GetId())
+        self.Bind(wx.EVT_MENU, self.on_admin_new_user, id=self.m_menui_adm_user_add.GetId())
+
 
     def on_about(self, event):
         my_dlg = FrameAbout(self)
@@ -87,7 +89,7 @@ class FrameMain(wx.Frame):
         if self.m_db.create_new_database(name=my_new_file[1], path_name=my_new_file[0]) is False:
             wx.LogError("Creating '{}' Failed!".format(my_dlg.GetPath()))
 
-        # TODO: Open database here
+        self.open_database(my_dlg.GetPath())
 
     def on_admin_open_database(self, event):
         my_dlg = wx.FileDialog(self, "Open database", wildcard="Database files (*.db)|*.db", style=wx.FD_OPEN)
@@ -103,6 +105,14 @@ class FrameMain(wx.Frame):
 
         self.SetTitle(self.m_title + " - " + database_path)
         return True
+
+    def on_admin_new_user(self, event):
+        if self.m_db.is_open() is False:
+            return
+        my_dlg = wx.TextEntryDialog(self, "New user name", "New user")
+        if my_dlg.ShowModal() != wx.ID_OK:
+            return
+        self.m_db.create_new_user(my_dlg.GetValue())
 
     def __del__(self):
         pass

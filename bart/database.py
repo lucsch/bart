@@ -81,5 +81,19 @@ class Database:
             return
         self.m_connection.close()
 
+    def is_open(self):
+        if self.m_connection is None:
+            return False
+        return True
+
     def __del__(self):
         self._close_database()
+
+    def create_new_user(self, user_name):
+        if self.is_open() is False:
+            return False
+
+        cur = self.m_connection.cursor()
+        cur.execute("insert into players (name) VALUES (:user_name)", {"user_name": user_name})
+        self.m_connection.commit()
+        return True
